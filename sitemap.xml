@@ -1,11 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
     <url>
-        <loc>http://bcandrea.github.com/codechunks/</loc>
-        <lastmod>2012-10-23T14:20:56+01:00</lastmod>
+        <loc>
+            http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/
+        </loc>
+        <lastmod>2012-10-25T17:20:04+01:00</lastmod>
     </url>
     <url>
-        <loc>http://bcandrea.github.com/codechunks/blog/archives/</loc>
-        <lastmod>2012-10-23T14:20:56+01:00</lastmod>
+        <loc>http://codechunks.org/</loc>
+        <lastmod>2012-10-25T17:20:04+01:00</lastmod>
+    </url>
+    <url>
+        <loc>http://codechunks.org/blog/archives/</loc>
+        <lastmod>2012-10-25T17:20:04+01:00</lastmod>
     </url>
 </urlset>

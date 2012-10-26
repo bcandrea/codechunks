@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Code::Chunks</title>
+  <title>A Makefile for the simplest shared library - Code::Chunks</title>
   <meta name="author" content="Andrea Bernardo Ciddio">
 
   
@@ -19,7 +19,7 @@ Let&#8217;s say we have just coded the most wonderful library foo, which &# &hel
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://codechunks.org/">
+  <link rel="canonical" href="http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -63,15 +63,12 @@ Let&#8217;s say we have just coded the most wonderful library foo, which &# &hel
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">A Makefile for the Simplest Shared Library</a></h1>
+      <h1 class="entry-title">A Makefile for the Simplest Shared Library</h1>
     
     
       <p class="meta">
@@ -89,34 +86,182 @@ Let&#8217;s say we have just coded the most wonderful library foo, which &# &hel
 
 <time datetime="2012-10-24T17:00:00+01:00" pubdate data-updated="true">Oct 24<span>th</span>, 2012</time>
         
-         | <a href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/#disqus_thread">Comments</a>
+         | <a href="#disqus_thread">Comments</a>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>The problem: writing a very simple Makefile to build a C shared library.
+<div class="entry-content"><p>The problem: writing a very simple Makefile to build a C shared library.
 Let&#8217;s say we have just coded the most wonderful library <code>foo</code>, which &#8211; not too surprisingly &#8211; has
 greetings as its main purpose.</p>
 
+<!-- more -->
+
+
+
+
+<div><script src='https://gist.github.com/3947197.js?file=foo.h'></script>
+<noscript><pre><code>#ifndef FOO_H
+#define FOO_H
+
+#include &lt;stdio.h&gt;
+
+void say_hello();
+
+#endif</code></pre></noscript></div>
+
+
+
+
+<div><script src='https://gist.github.com/3947197.js?file=foo.c'></script>
+<noscript><pre><code>#include &quot;foo.h&quot;
+
+void say_hello() {
+  printf(&quot;hello hello!\n&quot;);
+}</code></pre></noscript></div>
+
+
+<p>(Yeah, pretty impressive). We may also want to push it further, and test it using a quick C executable:</p>
+
+<div><script src='https://gist.github.com/3947197.js?file=foo_test.c'></script>
+<noscript><pre><code>#include &quot;foo.h&quot;
+
+int main() {
+  say_hello();
+  return 0;
+}</code></pre></noscript></div>
+
+
+<p>Here&#8217;s a simple Makefile with some nice features:</p>
+
+<ul>
+<li>the name and version of the library are just parameters</li>
+<li>it creates a shared object with a proper soname</li>
+<li>it compiles the library with debugging symbols, optimization and strict error checking</li>
+</ul>
+
+
+<div><script src='https://gist.github.com/3947197.js?file=basic.mk'></script>
+<noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
+CC := gcc
+MAJOR := 0
+MINOR := 1
+NAME := foo
+VERSION := $(MAJOR).$(MINOR)
+
+lib: lib$(NAME).so.$(VERSION)
+
+lib$(NAME).so.$(VERSION): $(NAME).o
+    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
+
+clean:
+    $(RM) *.o *.so*</code></pre></noscript></div>
+
+
+<p>Nice. But what about our little test program? Let&#8217;s add some clutter to the minimal Makefile:</p>
+
+<div><script src='https://gist.github.com/3947197.js?file=complete.mk'></script>
+<noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
+CC := gcc
+MAJOR := 0
+MINOR := 1
+NAME := foo
+VERSION := $(MAJOR).$(MINOR)
+
+lib: lib$(NAME).so.$(VERSION)
+
+test: $(NAME)_test
+    LD_LIBRARY_PATH=. ./$(NAME)_test
+
+$(NAME)_test: lib$(NAME).so
+    $(CC) $(NAME)_test.c -o $@ -L. -l$(NAME)
+
+lib$(NAME).so: lib$(NAME).so.$(VERSION)
+    ldconfig -v -n .
+    ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
+
+lib$(NAME).so.$(VERSION): $(NAME).o
+    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
+
+clean:
+    $(RM) $(NAME)_test *.o *.so*</code></pre></noscript></div>
+
+
+<p>The complete version has a <code>test</code> target which builds the <code>foo_test</code> executable (only if needed) and
+launches it (always). There is an intermediate step (the one involving <code>ldconfig</code>) which takes care of
+creating some symlinks needed to link against our <code>foo</code> library.</p>
+
+<h2>References</h2>
+
+<p><a href="http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html"> Program Library HOWTO </a> - The section about shared libraries</p>
+
+<p><a href="http://www.ibm.com/developerworks/library/l-shobj/"> Shared objects for the object disoriented! </a> - Quite old (2001) but very informative article</p>
+
+<p><a href="http://stackoverflow.com/questions/10803109/simple-makefile-for-compiling-a-shared-object-library-file"> Simple makefile for compiling a shared object library file </a> - Found on Stackoverflow (the library is written in C++, but the Makefile is adaptable to C with few modifications)</p>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">Read on &rarr;</a>
-    </footer>
+
+<span class="byline author vcard">Posted by <span class="fn">Andrea Bernardo Ciddio</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2012-10-24T17:00:00+01:00" pubdate data-updated="true">Oct 24<span>th</span>, 2012</time>
+      
+
+<span class="categories">
   
-  <div class="pagination">
+    <a class='category' href='/blog/categories/c/'>C</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/" data-via="bcandrea" data-counturl="http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -133,7 +278,7 @@ greetings as its main purpose.</p>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   
   <a href="https://github.com/bcandrea">@bcandrea</a> on GitHub
@@ -163,7 +308,7 @@ greetings as its main purpose.</p>
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -192,6 +337,7 @@ greetings as its main purpose.</p>
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -206,7 +352,10 @@ greetings as its main purpose.</p>
       var disqus_shortname = 'codechunks';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/';
+        var disqus_url = 'http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Code::Chunks]]></title>
-  <link href="http://codechunks.org/atom.xml" rel="self"/>
+  <title><![CDATA[Category: C | Code::Chunks]]></title>
+  <link href="http://codechunks.org/blog/categories/c/atom.xml" rel="self"/>
   <link href="http://codechunks.org/"/>
   <updated>2012-10-26T10:37:24+01:00</updated>
   <id>http://codechunks.org/</id>
@@ -19,15 +19,13 @@
     <updated>2012-10-24T17:00:00+01:00</updated>
     <id>http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library</id>
     <content type="html"><![CDATA[<p>The problem: writing a very simple Makefile to build a C shared library.
-Let&#8217;s say we have just coded the most wonderful library <code>foo</code>, which &#8211; not too surprisingly &#8211; has
+Let's say we have just coded the most wonderful library <code>foo</code>, which -- not too surprisingly -- has
 greetings as its main purpose.</p>
 
 <!-- more -->
 
 
-
-
-<div><script src='https://gist.github.com/3947197.js?file=foo.h'></script>
+<p><div><script src='https://gist.github.com/3947197.js?file=foo.h'></script>
 <noscript><pre><code>#ifndef FOO_H
 #define FOO_H
 
@@ -36,30 +34,28 @@ greetings as its main purpose.</p>
 void say_hello();
 
 #endif</code></pre></noscript></div>
+</p>
 
-
-
-
-<div><script src='https://gist.github.com/3947197.js?file=foo.c'></script>
+<p><div><script src='https://gist.github.com/3947197.js?file=foo.c'></script>
 <noscript><pre><code>#include &quot;foo.h&quot;
 
 void say_hello() {
   printf(&quot;hello hello!\n&quot;);
 }</code></pre></noscript></div>
-
+</p>
 
 <p>(Yeah, pretty impressive). We may also want to push it further, and test it using a quick C executable:</p>
 
-<div><script src='https://gist.github.com/3947197.js?file=foo_test.c'></script>
+<p><div><script src='https://gist.github.com/3947197.js?file=foo_test.c'></script>
 <noscript><pre><code>#include &quot;foo.h&quot;
 
 int main() {
   say_hello();
   return 0;
 }</code></pre></noscript></div>
+</p>
 
-
-<p>Here&#8217;s a simple Makefile with some nice features:</p>
+<p>Here's a simple Makefile with some nice features:</p>
 
 <ul>
 <li>the name and version of the library are just parameters</li>
@@ -68,7 +64,7 @@ int main() {
 </ul>
 
 
-<div><script src='https://gist.github.com/3947197.js?file=basic.mk'></script>
+<p><div><script src='https://gist.github.com/3947197.js?file=basic.mk'></script>
 <noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
 CC := gcc
 MAJOR := 0
@@ -79,15 +75,15 @@ VERSION := $(MAJOR).$(MINOR)
 lib: lib$(NAME).so.$(VERSION)
 
 lib$(NAME).so.$(VERSION): $(NAME).o
-    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
+	$(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
 
 clean:
-    $(RM) *.o *.so*</code></pre></noscript></div>
+	$(RM) *.o *.so*</code></pre></noscript></div>
+</p>
 
+<p>Nice. But what about our little test program? Let's add some clutter to the minimal Makefile:</p>
 
-<p>Nice. But what about our little test program? Let&#8217;s add some clutter to the minimal Makefile:</p>
-
-<div><script src='https://gist.github.com/3947197.js?file=complete.mk'></script>
+<p><div><script src='https://gist.github.com/3947197.js?file=complete.mk'></script>
 <noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
 CC := gcc
 MAJOR := 0
@@ -98,21 +94,21 @@ VERSION := $(MAJOR).$(MINOR)
 lib: lib$(NAME).so.$(VERSION)
 
 test: $(NAME)_test
-    LD_LIBRARY_PATH=. ./$(NAME)_test
+	LD_LIBRARY_PATH=. ./$(NAME)_test
 
 $(NAME)_test: lib$(NAME).so
-    $(CC) $(NAME)_test.c -o $@ -L. -l$(NAME)
+	$(CC) $(NAME)_test.c -o $@ -L. -l$(NAME)
 
 lib$(NAME).so: lib$(NAME).so.$(VERSION)
-    ldconfig -v -n .
-    ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
+	ldconfig -v -n .
+	ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
 
 lib$(NAME).so.$(VERSION): $(NAME).o
-    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
+	$(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
 
 clean:
-    $(RM) $(NAME)_test *.o *.so*</code></pre></noscript></div>
-
+	$(RM) $(NAME)_test *.o *.so*</code></pre></noscript></div>
+</p>
 
 <p>The complete version has a <code>test</code> target which builds the <code>foo_test</code> executable (only if needed) and
 launches it (always). There is an intermediate step (the one involving <code>ldconfig</code>) which takes care of
