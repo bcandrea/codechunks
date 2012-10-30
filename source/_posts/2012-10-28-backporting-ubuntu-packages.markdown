@@ -18,7 +18,7 @@ exactly how to do it, that is. Here's my little HOWTO.
 
 And beware: rerely things go well as in this case. Sometimes the package specification needs to be modified 
 to make it work (for instance, packaging CMake 2.8.5 for lucid is not trivial at all, but 
-[that's another story]({% post_url 2012-10-30-cmake-2-dot-8-5-in-lucid-lynx %})).
+[that's another story](/blog/2012/10/30/cmake-2-dot-8-5-in-lucid-lynx)).
 
 ## Launchpad
 

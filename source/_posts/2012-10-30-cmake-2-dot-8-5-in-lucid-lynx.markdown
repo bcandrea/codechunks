@@ -9,13 +9,13 @@ published: false
 
 Sometimes backporting a package is not a trivial task (quite often, actually). When the package in the source 
 distribution has dependencies that cannot be satisfied in the destination, tools such as `backportpackage` 
-(see [my previous post]({% post_url 2012-10-28-backporting-ubuntu-packages %})) are of little use.
+(see [my previous post](/blog/2012/10/28/backporting-ubuntu-packages/)) are of little use.
 
 <!-- more -->
 
 ## CMake, again
 
-I tried to follow the [steps described here]({% post_url 2012-10-28-backporting-ubuntu-packages %})
+I tried to follow the [steps described here](/blog/2012/10/28/backporting-ubuntu-packages)
 to backport CMake 2.8.5 to Lucid Lynx, with no luck.
 
     The following packages have unmet dependencies:
