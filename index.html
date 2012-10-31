@@ -9,8 +9,8 @@
   <meta name="author" content="Andrea Bernardo Ciddio">
 
   
-  <meta name="description" content="The problem: writing a very simple Makefile to build a C shared library.
-Let&#8217;s say we have just coded the most wonderful library foo, which &# &hellip;">
+  <meta name="description" content="Here&#8217;s how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
+in a Launchpad PPA. Instead of using apt-get source, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -71,6 +71,52 @@ Let&#8217;s say we have just coded the most wonderful library foo, which &# &hel
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2012/10/28/backporting-ubuntu-packages/">Backporting Ubuntu Packages: CMake</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-28T18:05:00+00:00" pubdate data-updated="true">Oct 28<span>th</span>, 2012</time>
+        
+         | <a href="/blog/2012/10/28/backporting-ubuntu-packages/#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Here&#8217;s how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
+in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. Instead of using <code>apt-get source</code>,
+<code>debuild</code> and <code>dput</code> manually I opted for the handy script <code>backportpackage</code>, which can be found in the
+<code>ubuntu-dev-utils</code> package.</p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/10/28/backporting-ubuntu-packages/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">A Makefile for the Simplest Shared Library</a></h1>
     
     
@@ -122,6 +168,10 @@ greetings as its main purpose.</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/28/backporting-ubuntu-packages/">Backporting Ubuntu packages: CMake</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">A Makefile for the simplest shared library</a>

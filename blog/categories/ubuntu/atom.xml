@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Code::Chunks]]></title>
-  <link href="http://codechunks.org/atom.xml" rel="self"/>
+  <title><![CDATA[Category: Ubuntu | Code::Chunks]]></title>
+  <link href="http://codechunks.org/blog/categories/ubuntu/atom.xml" rel="self"/>
   <link href="http://codechunks.org/"/>
   <updated>2012-10-31T11:50:51+00:00</updated>
   <id>http://codechunks.org/</id>
@@ -18,7 +18,7 @@
     <link href="http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/"/>
     <updated>2012-10-28T18:05:00+00:00</updated>
     <id>http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages</id>
-    <content type="html"><![CDATA[<p>Here&#8217;s how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
+    <content type="html"><![CDATA[<p>Here's how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
 in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. Instead of using <code>apt-get source</code>,
 <code>debuild</code> and <code>dput</code> manually I opted for the handy script <code>backportpackage</code>, which can be found in the
 <code>ubuntu-dev-utils</code> package.</p>
@@ -26,12 +26,12 @@ in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. I
 <!-- more -->
 
 
-<p>It&#8217;s actually quite easy to backport an existing package using the standard developer tools &#8211; once you find out
-exactly how to do it, that is. Here&#8217;s my little HOWTO.</p>
+<p>It's actually quite easy to backport an existing package using the standard developer tools -- once you find out
+exactly how to do it, that is. Here's my little HOWTO.</p>
 
 <p>And beware: rerely things go well as in this case. Sometimes the package specification needs to be modified
 to make it work (for instance, packaging CMake 2.8.5 for lucid is not trivial at all, but
-<a href="http://codechunks.org/blog/2012/10/30/cmake-2-dot-8-5-in-lucid-lynx">that&#8217;s another story</a>).</p>
+<a href="/blog/2012/10/30/cmake-2-dot-8-5-in-lucid-lynx">that's another story</a>).</p>
 
 <h2>Launchpad</h2>
 
@@ -41,7 +41,7 @@ and Debian packages. It allows users to set up private package repositories (PPA
 <p>You first need to set up an account (for free) at <a href="https://login.launchpad.net/+new_account">this URL</a>, as described
 <a href="https://help.launchpad.net/YourAccount/NewAccount">here</a>.</p>
 
-<p>In order to create your first PPA, you&#8217;ll need to <a href="https://help.launchpad.net/YourAccount/ImportingYourPGPKey">import your PGP key to Launchpad</a>
+<p>In order to create your first PPA, you'll need to <a href="https://help.launchpad.net/YourAccount/ImportingYourPGPKey">import your PGP key to Launchpad</a>
 and <a href="https://help.ubuntu.com/community/SigningCodeofConduct">sign the Ubuntu Code of Conduct</a>. There is a
 <a href="http://www.wikihow.com/Sign-the-Ubuntu-Code-of-Conduct">nice tutorial on WikiHow</a> if you like pictures.</p>
 
@@ -80,11 +80,11 @@ when called using <code>sudo</code>. Create the file <code>/etc/sudoers.d/pbuild
 ALL ALL=(ALL) SETENV: PBUILDERS
 </code></pre>
 
-<p>All done. Let&#8217;s backport the package (finally).</p>
+<p>All done. Let's backport the package (finally).</p>
 
 <h2>Building and uploading the package</h2>
 
-<p>We&#8217;ll work in a temporary directory, so first create it.</p>
+<p>We'll work in a temporary directory, so first create it.</p>
 
 <pre><code>$ mkdir -p ~/backports/cmake/natty
 </code></pre>
@@ -118,126 +118,11 @@ ALL ALL=(ALL) SETENV: PBUILDERS
 
 <h2>References</h2>
 
-<p><a href="http://www.simonschneegans.de/?p=346">How-To: PPA with CMake!</a> - A useful tutorial about PPAs (it&#8217;s not about <em>packaging</em> CMake itself, tough)</p>
+<p><a href="http://www.simonschneegans.de/?p=346">How-To: PPA with CMake!</a> - A useful tutorial about PPAs (it's not about <em>packaging</em> CMake itself, tough)</p>
 
 <p><a href="https://help.launchpad.net/Packaging/PPA/">Personal Package Archives</a> - Everything you always wanted to know about PPAs, but were too afraid to ask</p>
 
 <p><a href="http://developer.ubuntu.com/packaging/html/">Ubuntu packaging guide</a> - The ultimate source of information about Ubuntu packages</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[A Makefile for the simplest shared library]]></title>
-    <link href="http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/"/>
-    <updated>2012-10-24T17:00:00+01:00</updated>
-    <id>http://codechunks.org/blog/2012/10/24/a-makefile-for-the-simplest-shared-library</id>
-    <content type="html"><![CDATA[<p>The problem: writing a very simple Makefile to build a C shared library.
-Let&#8217;s say we have just coded the most wonderful library <code>foo</code>, which &#8211; not too surprisingly &#8211; has
-greetings as its main purpose.</p>
-
-<!-- more -->
-
-
-
-
-<div><script src='https://gist.github.com/3947197.js?file=foo.h'></script>
-<noscript><pre><code>#ifndef FOO_H
-#define FOO_H
-
-#include &lt;stdio.h&gt;
-
-void say_hello();
-
-#endif</code></pre></noscript></div>
-
-
-
-
-<div><script src='https://gist.github.com/3947197.js?file=foo.c'></script>
-<noscript><pre><code>#include &quot;foo.h&quot;
-
-void say_hello() {
-  printf(&quot;hello hello!\n&quot;);
-}</code></pre></noscript></div>
-
-
-<p>(Yeah, pretty impressive). We may also want to push it further, and test it using a quick C executable:</p>
-
-<div><script src='https://gist.github.com/3947197.js?file=foo_test.c'></script>
-<noscript><pre><code>#include &quot;foo.h&quot;
-
-int main() {
-  say_hello();
-  return 0;
-}</code></pre></noscript></div>
-
-
-<p>Here&#8217;s a simple Makefile with some nice features:</p>
-
-<ul>
-<li>the name and version of the library are just parameters</li>
-<li>it creates a shared object with a proper soname</li>
-<li>it compiles the library with debugging symbols, optimization and strict error checking</li>
-</ul>
-
-
-<div><script src='https://gist.github.com/3947197.js?file=basic.mk'></script>
-<noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
-CC := gcc
-MAJOR := 0
-MINOR := 1
-NAME := foo
-VERSION := $(MAJOR).$(MINOR)
-
-lib: lib$(NAME).so.$(VERSION)
-
-lib$(NAME).so.$(VERSION): $(NAME).o
-    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
-
-clean:
-    $(RM) *.o *.so*</code></pre></noscript></div>
-
-
-<p>Nice. But what about our little test program? Let&#8217;s add some clutter to the minimal Makefile:</p>
-
-<div><script src='https://gist.github.com/3947197.js?file=complete.mk'></script>
-<noscript><pre><code>CFLAGS := -fPIC -O3 -g -Wall -Werror
-CC := gcc
-MAJOR := 0
-MINOR := 1
-NAME := foo
-VERSION := $(MAJOR).$(MINOR)
-
-lib: lib$(NAME).so.$(VERSION)
-
-test: $(NAME)_test
-    LD_LIBRARY_PATH=. ./$(NAME)_test
-
-$(NAME)_test: lib$(NAME).so
-    $(CC) $(NAME)_test.c -o $@ -L. -l$(NAME)
-
-lib$(NAME).so: lib$(NAME).so.$(VERSION)
-    ldconfig -v -n .
-    ln -s lib$(NAME).so.$(MAJOR) lib$(NAME).so
-
-lib$(NAME).so.$(VERSION): $(NAME).o
-    $(CC) -shared -Wl,-soname,lib$(NAME).so.$(MAJOR) $^ -o $@
-
-clean:
-    $(RM) $(NAME)_test *.o *.so*</code></pre></noscript></div>
-
-
-<p>The complete version has a <code>test</code> target which builds the <code>foo_test</code> executable (only if needed) and
-launches it (always). There is an intermediate step (the one involving <code>ldconfig</code>) which takes care of
-creating some symlinks needed to link against our <code>foo</code> library.</p>
-
-<h2>References</h2>
-
-<p><a href="http://tldp.org/HOWTO/Program-Library-HOWTO/shared-libraries.html"> Program Library HOWTO </a> - The section about shared libraries</p>
-
-<p><a href="http://www.ibm.com/developerworks/library/l-shobj/"> Shared objects for the object disoriented! </a> - Quite old (2001) but very informative article</p>
-
-<p><a href="http://stackoverflow.com/questions/10803109/simple-makefile-for-compiling-a-shared-object-library-file"> Simple makefile for compiling a shared object library file </a> - Found on Stackoverflow (the library is written in C++, but the Makefile is adaptable to C with few modifications)</p>
 ]]></content>
   </entry>
   

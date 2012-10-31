@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Backporting Ubuntu packages: CMake - Code::Chunks</title>
+  <meta name="author" content="Andrea Bernardo Ciddio">
+
+  
+  <meta name="description" content="Here&#8217;s how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
+in a Launchpad PPA. Instead of using apt-get source, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Code::Chunks" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Code::Chunks</a></h1>
+  
+    <h2>blog << self.mind.dump</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:codechunks.org" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Backporting Ubuntu Packages: CMake</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-28T18:05:00+00:00" pubdate data-updated="true">Oct 28<span>th</span>, 2012</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Here&#8217;s how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
+in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. Instead of using <code>apt-get source</code>,
+<code>debuild</code> and <code>dput</code> manually I opted for the handy script <code>backportpackage</code>, which can be found in the
+<code>ubuntu-dev-utils</code> package.</p>
+
+<!-- more -->
+
+
+<p>It&#8217;s actually quite easy to backport an existing package using the standard developer tools &#8211; once you find out
+exactly how to do it, that is. Here&#8217;s my little HOWTO.</p>
+
+<p>And beware: rerely things go well as in this case. Sometimes the package specification needs to be modified
+to make it work (for instance, packaging CMake 2.8.5 for lucid is not trivial at all, but
+<a href="/blog/2012/10/30/cmake-2-dot-8-5-in-lucid-lynx">that&#8217;s another story</a>).</p>
+
+<h2>Launchpad</h2>
+
+<p><a href="https://launchpad.net">Launchpad</a> (among other things) is a good platform for generating and publishing Ubuntu
+and Debian packages. It allows users to set up private package repositories (PPAs) and hosts a farm of build servers as well.</p>
+
+<p>You first need to set up an account (for free) at <a href="https://login.launchpad.net/+new_account">this URL</a>, as described
+<a href="https://help.launchpad.net/YourAccount/NewAccount">here</a>.</p>
+
+<p>In order to create your first PPA, you&#8217;ll need to <a href="https://help.launchpad.net/YourAccount/ImportingYourPGPKey">import your PGP key to Launchpad</a>
+and <a href="https://help.ubuntu.com/community/SigningCodeofConduct">sign the Ubuntu Code of Conduct</a>. There is a
+<a href="http://www.wikihow.com/Sign-the-Ubuntu-Code-of-Conduct">nice tutorial on WikiHow</a> if you like pictures.</p>
+
+<p>So far so good. You can now create your first PPA by following the link on your home page, which is something like
+<code>https://launchpad.net/~username</code>. I would suggest to pick a meaningful short name for the URL (I chose <code>backports</code> for
+this one) instead of just <code>ppa</code>.</p>
+
+<h2>Setting up your system</h2>
+
+<p>Your local Ubuntu box needs to be configured (only once) before trying to backport packages. First install some prerequisites:</p>
+
+<pre><code>$ sudo apt-get install cowbuilder ubuntu-dev-utils
+</code></pre>
+
+<p>Then create the base folder which will be used to setup the chrooted environment in which the package will be built:</p>
+
+<pre><code>$ mkdir -p ~/pbuilder/
+$ sudo cowbuilder --create --distribution natty --components "main restricted universe multiverse" --basepath=$HOME/pbuilder/natty-base.cow
+</code></pre>
+
+<p>If you have more than one PGP key in your local keyring (I do), you may also want to specify which one to use when signing
+packages. Just list your keys with <code>gpg --list-keys</code>, and copy the key id to <code>/etc/devscript.conf</code> under the debsign stanza:</p>
+
+<pre><code>DEBSIGN_KEYID=FDCCCD6E
+</code></pre>
+
+<p>Last problem to avoid: the personal package builders cowbuilder and pbuilder must be allowed to preserve the environment
+when called using <code>sudo</code>. Create the file <code>/etc/sudoers.d/pbuilders</code> using the command</p>
+
+<pre><code>$ sudo visudo -f /etc/sudoers.d/pbuilders
+</code></pre>
+
+<p>and put the following two lines into it:</p>
+
+<pre><code>Cmnd_Alias PBUILDERS = /usr/sbin/pbuilder, /usr/sbin/cowbuilder
+ALL ALL=(ALL) SETENV: PBUILDERS
+</code></pre>
+
+<p>All done. Let&#8217;s backport the package (finally).</p>
+
+<h2>Building and uploading the package</h2>
+
+<p>We&#8217;ll work in a temporary directory, so first create it.</p>
+
+<pre><code>$ mkdir -p ~/backports/cmake/natty
+</code></pre>
+
+<p>Now cd into it:</p>
+
+<pre><code>$ cd ~/backports/cmake/natty
+</code></pre>
+
+<p>You should test the package build before the submission to Launchpad; it can be done by running <code>backportpackage</code> with the <code>-b</code> option:</p>
+
+<pre><code>$ BASEPATH=~/pbuilder/natty-base.cow DEBEMAIL=bcandrea@gmail.com DEBFULLNAME="Andrea Bernardo Ciddio" backportpackage -B cowbuilder -b -s oneiric -d natty -w . cmake
+</code></pre>
+
+<p>A brief explanation of the options:</p>
+
+<ul>
+<li><code>BASEPATH=~/pbuilder/natty-base.cow</code>: this tells <code>cowbuilder</code> where to find the base image for the chroot</li>
+<li><code>DEBEMAIL=bcandrea@gmail.com DEBFULLNAME="Andrea Bernardo Ciddio"</code>: those values will appear in the generated Debian package</li>
+<li><code>-B cowbuilder</code>: select <code>cowbuilder</code> to create the package (<code>pbuilder</code> is the default)</li>
+<li><code>-b</code>: build the package completely and generate .deb files</li>
+<li><code>-s oneiric -d natty</code>: source and destination codenames, respectively</li>
+<li><code>-w .</code>: use the current path as a local build directory</li>
+</ul>
+
+
+<p>Now that everything seems to be working, the package can be uploaded to our freshly created PPA:</p>
+
+<pre><code>$ DEBEMAIL=bcandrea@gmail.com DEBFULLNAME="Andrea Bernardo Ciddio" backportpackage -s oneiric -d natty -u ppa:bcandrea/backports cmake
+</code></pre>
+
+<h2>References</h2>
+
+<p><a href="http://www.simonschneegans.de/?p=346">How-To: PPA with CMake!</a> - A useful tutorial about PPAs (it&#8217;s not about <em>packaging</em> CMake itself, tough)</p>
+
+<p><a href="https://help.launchpad.net/Packaging/PPA/">Personal Package Archives</a> - Everything you always wanted to know about PPAs, but were too afraid to ask</p>
+
+<p><a href="http://developer.ubuntu.com/packaging/html/">Ubuntu packaging guide</a> - The ultimate source of information about Ubuntu packages</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Andrea Bernardo Ciddio</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-10-28T18:05:00+00:00" pubdate data-updated="true">Oct 28<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ubuntu/'>Ubuntu</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/" data-via="bcandrea" data-counturl="http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/" title="Previous Post: A Makefile for the simplest shared library">&laquo; A Makefile for the simplest shared library</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/10/28/backporting-ubuntu-packages/">Backporting Ubuntu packages: CMake</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/10/24/a-makefile-for-the-simplest-shared-library/">A Makefile for the simplest shared library</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/bcandrea">@bcandrea</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'bcandrea',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("bcandrea", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/bcandrea" class="twitter-follow-button" data-show-count="false">Follow @bcandrea</a>
+  
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/107442943519608553033?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - Andrea Bernardo Ciddio -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'codechunks';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/';
+        var disqus_url = 'http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
