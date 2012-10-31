@@ -7,7 +7,7 @@ categories: [Ubuntu]
 ---
 
 Here's how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available 
-in a [Launchpad PPA](https://ppa.launchpad.net/bcandrea/backports). Instead of using `apt-get source`,
+in a [Launchpad PPA](https://launchpad.net/~bcandrea/+archive/backports). Instead of using `apt-get source`,
 `debuild` and `dput` manually I opted for the handy script `backportpackage`, which can be found in the
 `ubuntu-dev-utils` package.
 
