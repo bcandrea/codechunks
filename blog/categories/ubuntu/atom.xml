@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ubuntu | Code::Chunks]]></title>
   <link href="http://codechunks.org/blog/categories/ubuntu/atom.xml" rel="self"/>
   <link href="http://codechunks.org/"/>
-  <updated>2013-02-12T16:35:31+00:00</updated>
+  <updated>2013-02-12T16:44:24+00:00</updated>
   <id>http://codechunks.org/</id>
   <author>
     <name><![CDATA[Andrea Bernardo Ciddio]]></name>
@@ -63,7 +63,7 @@ $ sudo cowbuilder --create --distribution natty --components "main restricted un
 </code></pre>
 
 <p>If you have more than one PGP key in your local keyring (I do), you may also want to specify which one to use when signing
-packages. Just list your keys with <code>gpg --list-keys</code>, and copy the key id to <code>/etc/devscript.conf</code> under the debsign stanza:</p>
+packages. Just list your keys with <code>gpg --list-keys</code>, and copy the key id to <code>/etc/devscripts.conf</code> under the debsign stanza:</p>
 
 <pre><code>DEBSIGN_KEYID=FDCCCD6E
 </code></pre>
