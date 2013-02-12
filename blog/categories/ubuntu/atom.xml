@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Ubuntu | Code::Chunks]]></title>
   <link href="http://codechunks.org/blog/categories/ubuntu/atom.xml" rel="self"/>
   <link href="http://codechunks.org/"/>
-  <updated>2012-10-31T11:50:51+00:00</updated>
+  <updated>2013-02-12T16:35:31+00:00</updated>
   <id>http://codechunks.org/</id>
   <author>
     <name><![CDATA[Andrea Bernardo Ciddio]]></name>
@@ -19,7 +19,7 @@
     <updated>2012-10-28T18:05:00+00:00</updated>
     <id>http://codechunks.org/blog/2012/10/28/backporting-ubuntu-packages</id>
     <content type="html"><![CDATA[<p>Here's how I backported the Ubuntu package for CMake 2.8.5 to natty, making it available
-in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. Instead of using <code>apt-get source</code>,
+in a <a href="https://launchpad.net/~bcandrea/+archive/backports">Launchpad PPA</a>. Instead of using <code>apt-get source</code>,
 <code>debuild</code> and <code>dput</code> manually I opted for the handy script <code>backportpackage</code>, which can be found in the
 <code>ubuntu-dev-utils</code> package.</p>
 
@@ -29,7 +29,7 @@ in a <a href="https://ppa.launchpad.net/bcandrea/backports">Launchpad PPA</a>. I
 <p>It's actually quite easy to backport an existing package using the standard developer tools -- once you find out
 exactly how to do it, that is. Here's my little HOWTO.</p>
 
-<p>And beware: rerely things go well as in this case. Sometimes the package specification needs to be modified
+<p>And beware: rarely things go well as in this case. Sometimes the package specification needs to be modified
 to make it work (for instance, packaging CMake 2.8.5 for lucid is not trivial at all, but
 <a href="/blog/2012/10/30/cmake-2-dot-8-5-in-lucid-lynx">that's another story</a>).</p>
 
@@ -53,7 +53,7 @@ this one) instead of just <code>ppa</code>.</p>
 
 <p>Your local Ubuntu box needs to be configured (only once) before trying to backport packages. First install some prerequisites:</p>
 
-<pre><code>$ sudo apt-get install cowbuilder ubuntu-dev-utils
+<pre><code>$ sudo apt-get install cowbuilder ubuntu-dev-tools
 </code></pre>
 
 <p>Then create the base folder which will be used to setup the chrooted environment in which the package will be built:</p>
