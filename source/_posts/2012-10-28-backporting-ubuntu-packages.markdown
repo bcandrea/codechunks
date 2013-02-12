@@ -48,7 +48,7 @@ Then create the base folder which will be used to setup the chrooted environment
     $ sudo cowbuilder --create --distribution natty --components "main restricted universe multiverse" --basepath=$HOME/pbuilder/natty-base.cow
 
 If you have more than one PGP key in your local keyring (I do), you may also want to specify which one to use when signing 
-packages. Just list your keys with `gpg --list-keys`, and copy the key id to `/etc/devscript.conf` under the debsign stanza:
+packages. Just list your keys with `gpg --list-keys`, and copy the key id to `/etc/devscripts.conf` under the debsign stanza:
 
     DEBSIGN_KEYID=FDCCCD6E
 
