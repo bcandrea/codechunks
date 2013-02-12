@@ -40,7 +40,7 @@ this one) instead of just `ppa`.
 
 Your local Ubuntu box needs to be configured (only once) before trying to backport packages. First install some prerequisites:
 
-    $ sudo apt-get install cowbuilder ubuntu-dev-utils
+    $ sudo apt-get install cowbuilder ubuntu-dev-tools
 
 Then create the base folder which will be used to setup the chrooted environment in which the package will be built:
 
